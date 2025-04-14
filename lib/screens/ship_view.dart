@@ -1,20 +1,17 @@
 import 'package:asteroid_bomber/resources/colors_resources.dart';
-import 'package:asteroid_bomber/screens/asteriods_view.dart';
-import 'package:asteroid_bomber/screens/ship_view.dart';
 import 'package:flutter/material.dart';
 
-class CanvasView extends StatefulWidget {
-  const CanvasView({super.key});
+class ShipView extends StatefulWidget {
+  const ShipView({super.key});
 
   @override
-  State<CanvasView> createState() => _CanvasViewState();
+  State<ShipView> createState() => _ShipViewState();
 }
 
-class _CanvasViewState extends State<CanvasView> {
+class _ShipViewState extends State<ShipView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorsResources.surface,
       body: GestureDetector(
         onPanUpdate: (details) {},
         onPanEnd: (details) {},
@@ -22,10 +19,7 @@ class _CanvasViewState extends State<CanvasView> {
         child: Container(
           color: ColorsResources.surface,
           child: const Stack(
-            children: [
-              AsteroidsView(),
-              ShipView(),
-            ],
+            children: [],
           ),
         ),
       ),
