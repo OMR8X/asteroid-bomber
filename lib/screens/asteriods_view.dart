@@ -14,20 +14,20 @@ class AsteroidsView extends StatefulWidget {
 }
 
 class _AsteroidsViewState extends State<AsteroidsView> {
-  late AsteriodsBloc asteriodsBloc;
+  late AsteroidsBloc asteroidsBloc;
   late Timer asteroidTimer;
 
   @override
   void initState() {
     super.initState();
-    asteriodsBloc = AsteriodsBloc();
-    asteriodsBloc.add(AddAsteriodEvent());
+    asteroidsBloc = AsteroidsBloc();
+    asteroidsBloc.add(AddAsteroidEvent());
     asteroidTimer = Timer.periodic(Duration(milliseconds: 300), (timer) {
-      asteriodsBloc.add(UpdateAsteriodEvent());
+      asteroidsBloc.add(UpdateAsteroidEvent());
 
       // 10%
       if (Random().nextInt(100) < 10) {
-        asteriodsBloc.add(AddAsteriodEvent());
+        asteroidsBloc.add(AddAsteroidEvent());
       }
     });
   }
@@ -35,7 +35,7 @@ class _AsteroidsViewState extends State<AsteroidsView> {
   @override
   void dispose() {
     asteroidTimer.cancel();
-    asteriodsBloc.close();
+    asteroidsBloc.close();
     super.dispose();
   }
 
@@ -43,12 +43,12 @@ class _AsteroidsViewState extends State<AsteroidsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider.value(
-        value: asteriodsBloc,
+        value: asteroidsBloc,
         child: Container(
           color: ColorsResources.surface,
           child: Stack(
             children: [
-              BlocBuilder<AsteriodsBloc, AsteriodsState>(
+              BlocBuilder<AsteroidsBloc, AsteroidsState>(
                 builder: (context, state) {
                   return Stack(
                     children: state.asteroids.map((asteroid) {

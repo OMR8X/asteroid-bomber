@@ -1,11 +1,11 @@
 part of 'asteriods_bloc.dart';
 
-class AsteriodsState extends Equatable {
+class AsteroidsState extends Equatable {
   final List<Asteroid> asteroids;
-  const AsteriodsState({required this.asteroids});
+  const AsteroidsState({required this.asteroids});
 
-  AsteriodsState copyWith({List<Asteroid>? asteriods}) {
-    return AsteriodsState(
+  AsteroidsState copyWith({List<Asteroid>? asteriods}) {
+    return AsteroidsState(
       asteroids: asteriods ?? this.asteroids,
     );
   }

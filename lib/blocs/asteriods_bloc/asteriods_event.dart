@@ -1,14 +1,14 @@
 part of 'asteriods_bloc.dart';
 
-sealed class AsteriodsEvent extends Equatable {
-  const AsteriodsEvent();
+sealed class AsteroidsEvent extends Equatable {
+  const AsteroidsEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class AddAsteriodEvent extends AsteriodsEvent {}
+class AddAsteroidEvent extends AsteroidsEvent {}
 
-class UpdateAsteriodEvent extends AsteriodsEvent {}
+class UpdateAsteroidEvent extends AsteroidsEvent {}
 
-class DamagedAsteriodEvent extends AsteriodsEvent {}
+class DamagedAsteroidEvent extends AsteroidsEvent {}

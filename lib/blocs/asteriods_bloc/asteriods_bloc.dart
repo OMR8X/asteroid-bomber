@@ -9,10 +9,10 @@ import '../../models/asteroid.dart';
 part 'asteriods_event.dart';
 part 'asteriods_state.dart';
 
-class AsteriodsBloc extends Bloc<AsteriodsEvent, AsteriodsState> {
+class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
   int _idCounter = 0;
-  AsteriodsBloc() : super(AsteriodsState(asteroids: [])) {
-    on<AddAsteriodEvent>((event, emit) {
+  AsteroidsBloc() : super(AsteroidsState(asteroids: [])) {
+    on<AddAsteroidEvent>((event, emit) {
       //
       final random = Random();
       final newAsteroid = Asteroid(
@@ -22,9 +22,9 @@ class AsteriodsBloc extends Bloc<AsteriodsEvent, AsteriodsState> {
         speed: 5 + random.nextDouble() * 6,
         imagePath: "${ImagesResources.asteroidImagePath}${random.nextInt(8) + 1}.png",
       );
-      emit(AsteriodsState(asteroids: [...state.asteroids, newAsteroid]));
+      emit(AsteroidsState(asteroids: [...state.asteroids, newAsteroid]));
     });
-    on<UpdateAsteriodEvent>((event, emit) {
+    on<UpdateAsteroidEvent>((event, emit) {
       final updated = state.asteroids
           .map((asteroid) => Asteroid(
                 id: asteroid.id,
@@ -39,7 +39,7 @@ class AsteriodsBloc extends Bloc<AsteriodsEvent, AsteriodsState> {
 
       emit(state.copyWith(asteriods: updated));
     });
-    on<DamagedAsteriodEvent>((event, emit) {
+    on<DamagedAsteroidEvent>((event, emit) {
       //
     });
   }
