@@ -18,3 +18,23 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+/// [ ***GIT COMMANDS*** ]
+/// 
+/// [ GIT ADD & COMMIT ]
+/// git commit -am "MESSAGE"
+/// [ GIT PUSH TO SPECIFIC BRANCH ]
+/// git push origin "NAME"
+/// 
+/// [EXPLORE BRANCHes]
+/// git branch
+/// [CREATE BRANCH]
+/// git branch "NAME"
+/// [SWITCH TO BRANCH]
+/// git checkout "NAME"
+/// [CREATE & SWITCH TO NEW BRANCH]
+/// git checkout -b "NAME"
+/// [DELETE BRANCH]
+/// git branch -D "NAME"
+
+/// [SWITCH TO REMOTE BRANCH]
+/// git checkout --track origin/"NAME"
