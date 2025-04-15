@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:asteroid_bomber/blocs/asteriods_bloc/asteriods_bloc.dart';
-import 'package:asteroid_bomber/resources/colors_resources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,11 +21,23 @@ class _AsteroidsViewState extends State<AsteroidsView> {
     super.initState();
     asteroidsBloc = AsteroidsBloc();
     asteroidsBloc.add(AddAsteroidEvent());
+    int _noAsteroids = 0;
     asteroidTimer = Timer.periodic(Duration(milliseconds: 300), (timer) {
-      asteroidsBloc.add(UpdateAsteroidEvent());
-      // 10%
-      if (Random().nextInt(100) < 10) {
+      asteroidsBloc.add(UpdateAsteroidEvent(screenHeight: MediaQuery.sizeOf(context).height));
+      // #Asteroids < 15 => 40%
+      if (_noAsteroids < 15 && Random().nextInt(100) < 40) {
         asteroidsBloc.add(AddAsteroidEvent());
+        _noAsteroids = asteroidsBloc.state.asteroids.length;
+      }
+      // #Asteroids < 5 => 25%
+      else if (_noAsteroids < 5 && Random().nextInt(100) < 25) {
+        asteroidsBloc.add(AddAsteroidEvent());
+        _noAsteroids = asteroidsBloc.state.asteroids.length;
+      }
+      // 10%
+      else if (Random().nextInt(100) < 10) {
+        asteroidsBloc.add(AddAsteroidEvent());
+        _noAsteroids = asteroidsBloc.state.asteroids.length;
       }
     });
   }
