@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/rocket_drag.dart';
+import 'screens/asteriods_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Asteroid Bomber',
       debugShowCheckedModeBanner: false,
-      home: RocketDragView(),
+      home: AsteroidsView(),
     );
   }
 }
