@@ -34,7 +34,7 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
                 imagePath: asteroid.imagePath,
                 position: asteroid.position + asteroid.speed,
               ))
-          .where((a) => a.position < 700) // مثلاً 600
+          .where((a) => a.position < event.screenHeight)
           .toList();
 
       emit(state.copyWith(asteriods: updated));
