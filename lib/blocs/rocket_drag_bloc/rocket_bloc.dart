@@ -19,7 +19,6 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
       state.position.dx + event.offset.dx,
       state.position.dy + event.offset.dy,
     );
-
     emit(state.copyWith(position: newPosition));
   }
 }

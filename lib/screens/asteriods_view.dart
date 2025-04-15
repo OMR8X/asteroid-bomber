@@ -24,7 +24,6 @@ class _AsteroidsViewState extends State<AsteroidsView> {
     asteroidsBloc.add(AddAsteroidEvent());
     asteroidTimer = Timer.periodic(Duration(milliseconds: 300), (timer) {
       asteroidsBloc.add(UpdateAsteroidEvent());
-
       // 10%
       if (Random().nextInt(100) < 10) {
         asteroidsBloc.add(AddAsteroidEvent());
