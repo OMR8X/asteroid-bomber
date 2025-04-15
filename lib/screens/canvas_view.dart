@@ -20,13 +20,15 @@ class _CanvasViewState extends State<CanvasView> {
         onPanUpdate: (details) {},
         onPanEnd: (details) {},
         onPanDown: (details) {},
-        child: Container(
-          color: ColorsResources.surface,
-          child: Stack(
-            children: [
-              const AsteroidsView(),
-              RocketDragView(),
-            ],
+        child: SafeArea(
+          child: Container(
+            color: ColorsResources.surface,
+            child: Stack(
+              children: [
+                const AsteroidsView(),
+                RocketDragView(),
+              ],
+            ),
           ),
         ),
       ),

@@ -19,7 +19,7 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
         id: _idCounter++,
         hp: 100,
         line: random.nextInt(7),
-        speed: 5 + random.nextDouble() * 6,
+        speed: 30 + random.nextDouble() * 6,
         imagePath: "${ImagesResources.asteroidImagePath}${random.nextInt(8) + 1}.png",
       );
       emit(AsteroidsState(asteroids: [...state.asteroids, newAsteroid]));
@@ -34,7 +34,7 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
                 imagePath: asteroid.imagePath,
                 position: asteroid.position + asteroid.speed,
               ))
-          .where((a) => a.position < 600) // مثلاً 600
+          .where((a) => a.position < 700) // مثلاً 600
           .toList();
 
       emit(state.copyWith(asteriods: updated));
