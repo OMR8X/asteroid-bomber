@@ -41,35 +41,33 @@ class _AsteroidsViewState extends State<AsteroidsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocProvider.value(
-        value: asteroidsBloc,
-        child: Container(
-          color: ColorsResources.surface,
-          child: Stack(
-            children: [
-              BlocBuilder<AsteroidsBloc, AsteroidsState>(
-                builder: (context, state) {
-                  return Stack(
-                    children: state.asteroids.map((asteroid) {
-                      return AnimatedPositioned(
-                        key: ValueKey(asteroid.id),
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.linear,
-                        left: asteroid.line * (MediaQuery.sizeOf(context).width / 7),
-                        top: asteroid.position,
-                        child: SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Image.asset(asteroid.imagePath),
-                        ),
-                      );
-                    }).toList(),
-                  );
-                },
-              ),
-            ],
-          ),
+    return BlocProvider.value(
+      value: asteroidsBloc,
+      child: Container(
+        color: Colors.transparent,
+        child: Stack(
+          children: [
+            BlocBuilder<AsteroidsBloc, AsteroidsState>(
+              builder: (context, state) {
+                return Stack(
+                  children: state.asteroids.map((asteroid) {
+                    return AnimatedPositioned(
+                      key: ValueKey(asteroid.id),
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.linear,
+                      left: asteroid.line * (MediaQuery.sizeOf(context).width / 7),
+                      top: asteroid.position,
+                      child: SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: Image.asset(asteroid.imagePath),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

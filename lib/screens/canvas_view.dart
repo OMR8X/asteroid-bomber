@@ -15,7 +15,7 @@ class _CanvasViewState extends State<CanvasView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorsResources.surface,
+      backgroundColor: Colors.black,
       body: GestureDetector(
         onPanUpdate: (details) {},
         onPanEnd: (details) {},

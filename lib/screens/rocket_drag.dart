@@ -10,51 +10,48 @@ class RocketDragView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => RocketBloc(),
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: BlocBuilder<RocketBloc, RocketState>(
-          buildWhen: (previous, current) {
-            // TODO: use build when
-            // previous.position != current.position
-            return true;
-          },
-          builder: (context, state) {
-            return Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Positioned(
-                  left: state.position.dx,
-                  // TODO: FREEZE THE ROCKET on vertical axes , rocket should only move horizontally
-                  top: state.position.dy,
-                  child: GestureDetector(
+      child: BlocBuilder<RocketBloc, RocketState>(
+        buildWhen: (previous, current) {
+          // TODO: use build when
+          // previous.position != current.position
+          return true;
+        },
+        builder: (context, state) {
+          return Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              Positioned(
+                left: state.position.dx,
+                // TODO: FREEZE THE ROCKET on vertical axes , rocket should only move horizontally
+                top: state.position.dy,
+                child: GestureDetector(
+                  onPanUpdate: (details) {
+                    // TODO: improvments
+                    /*
+                    ✅ 1. Throttle position updates
+                    Reduce the number of events fired to BLoC using a cool-down timer:
+                    DateTime? lastUpdate;
                     onPanUpdate: (details) {
-                      // TODO: improvments
-                      /*
-                      ✅ 1. Throttle position updates
-                      Reduce the number of events fired to BLoC using a cool-down timer:
-                      DateTime? lastUpdate;
-                      onPanUpdate: (details) {
-                        final now = DateTime.now();
-                        if (lastUpdate == null || now.difference(lastUpdate!) > Duration(milliseconds: 16)) {
-                          lastUpdate = now;
-                          context.read<RocketBloc>().add(RocketPositionUpdated(details.delta));
-                        }
-                      },
-                      This gives you roughly 60 updates per second (similar to screen refresh rate). 
-                      */
-                      context.read<RocketBloc>().add(RocketPositionUpdated(details.delta));
+                      final now = DateTime.now();
+                      if (lastUpdate == null || now.difference(lastUpdate!) > Duration(milliseconds: 16)) {
+                        lastUpdate = now;
+                        context.read<RocketBloc>().add(RocketPositionUpdated(details.delta));
+                      }
                     },
-                    child: Image.asset(
-                      ImagesResources.rocketImagePath,
-                      width: 100,
-                      height: 100,
-                    ),
+                    This gives you roughly 60 updates per second (similar to screen refresh rate). 
+                    */
+                    context.read<RocketBloc>().add(RocketPositionUpdated(details.delta));
+                  },
+                  child: Image.asset(
+                    ImagesResources.rocketImagePath,
+                    width: 100,
+                    height: 100,
                   ),
                 ),
-              ],
-            );
-          },
-        ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
