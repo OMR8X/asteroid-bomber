@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'screens/canvas_view.dart';
-import 'screens/rocket_drag.dart';
-import 'screens/asteriods_view.dart';
 
 void main() {
   runApp(const MyApp());
