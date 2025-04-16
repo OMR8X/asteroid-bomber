@@ -1,8 +1,10 @@
+import 'package:asteroid_bomber/resources/asteroids_resources.dart';
+
 class Asteroid {
   final int id;
   int hp;
   final double speed;
-  final int line; // 0 .. 6
+  final int line; // 0 .. 4
   double position;
   final String imagePath;
 
@@ -12,6 +14,6 @@ class Asteroid {
     required this.speed,
     required this.line,
     required this.imagePath,
-    this.position = -40.0,
+    this.position = AsteroidsResources.startPosition,
   });
 }
