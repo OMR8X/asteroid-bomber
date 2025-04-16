@@ -7,11 +7,20 @@ abstract class RocketEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class RocketPositionUpdated extends RocketEvent {
+class RocketPositionUpdatedEvent extends RocketEvent {
   final Offset offset;
 
-  const RocketPositionUpdated(this.offset);
+  const RocketPositionUpdatedEvent(this.offset);
 
   @override
   List<Object> get props => [offset];
+}
+
+class RocketScreenInitializedEvent extends RocketEvent {
+  final Size screenSize;
+
+  const RocketScreenInitializedEvent(this.screenSize);
+
+  @override
+  List<Object> get props => [screenSize];
 }

@@ -1,3 +1,4 @@
+import 'package:asteroid_bomber/constants/layout_constants.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,19 +7,34 @@ part 'rocket_event.dart';
 part 'rocket_state.dart';
 
 class RocketBloc extends Bloc<RocketEvent, RocketState> {
-  // Initialize the BLoC with the initial state
   RocketBloc() : super(RocketState.initial()) {
-    on<RocketPositionUpdated>(_onPositionUpdated);
+    on<RocketPositionUpdatedEvent>(_onPositionUpdated);
+    on<RocketScreenInitializedEvent>(_onScreenInitialized);
   }
 
   void _onPositionUpdated(
-    RocketPositionUpdated event,
-    Emitter<RocketState> emit,
-  ) {
-    final newPosition = Offset(
-      state.position.dx + event.offset.dx,
-      state.position.dy + event.offset.dy,
+      RocketPositionUpdatedEvent event, Emitter<RocketState> emit) {
+    final newX = (state.position.dx + event.offset.dx)
+        .clamp(0.0, state.screenSize.width - LayoutConstants.rocketSize.width);
+    final newY = (state.position.dy + event.offset.dy).clamp(
+      state.lowerBoundY,
+      state.screenSize.height - LayoutConstants.rocketSize.height,
     );
-    emit(state.copyWith(position: newPosition));
+
+    emit(state.copyWith(position: Offset(newX, newY)));
+  }
+
+  void _onScreenInitialized(
+      RocketScreenInitializedEvent event, Emitter<RocketState> emit) {
+    final centerX =
+        (event.screenSize.width - LayoutConstants.rocketSize.width) / 2;
+    final lowerY =
+        event.screenSize.height * LayoutConstants.rocketInitialYOffsetFraction;
+
+    emit(state.copyWith(
+      position: Offset(centerX, lowerY),
+      screenSize: event.screenSize,
+      lowerBoundY: lowerY,
+    ));
   }
 }

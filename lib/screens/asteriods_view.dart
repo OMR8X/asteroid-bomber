@@ -25,6 +25,7 @@ class _AsteroidsViewState extends State<AsteroidsView> {
     asteroidsBloc.add(AddAsteroidEvent());
     int noAsteroids = 0;
     asteroidTimer = Timer.periodic(Duration(milliseconds: 300), (timer) {
+
       asteroidsBloc.add(UpdateAsteroidEvent(screenHeight: MediaQuery.sizeOf(context).height));
       if (Random().nextInt(100) < (100 - noAsteroids * (100 / AsteroidsResources.maxNoAsteroids))) {
         asteroidsBloc.add(AddAsteroidEvent());
