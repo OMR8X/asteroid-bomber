@@ -16,6 +16,15 @@ class RocketPositionUpdatedEvent extends RocketEvent {
   List<Object> get props => [offset];
 }
 
+class RocketPositionChangedEvent extends RocketEvent {
+  final Offset position;
+
+  const RocketPositionChangedEvent(this.position);
+
+  @override
+  List<Object> get props => [position];
+}
+
 class RocketScreenInitializedEvent extends RocketEvent {
   final Size screenSize;
 

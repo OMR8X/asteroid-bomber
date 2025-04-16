@@ -9,6 +9,7 @@ part 'rocket_state.dart';
 class RocketBloc extends Bloc<RocketEvent, RocketState> {
   RocketBloc() : super(RocketState.initial()) {
     on<RocketPositionUpdatedEvent>(_onPositionUpdated);
+    on<RocketPositionChangedEvent>(_onPositionChanged); // 👈 new handler
     on<RocketScreenInitializedEvent>(_onScreenInitialized);
   }
 
@@ -18,14 +19,29 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
   ) {
     final newX = (state.position.dx + event.offset.dx)
         .clamp(0.0, state.screenSize.width - LayoutConstants.rocketSize.width);
-
     final newY = state.position.dy;
 
     emit(state.copyWith(position: Offset(newX, newY)));
   }
 
+  void _onPositionChanged(
+    RocketPositionChangedEvent event,
+    Emitter<RocketState> emit,
+  ) {
+    final clampedX = event.position.dx.clamp(
+      0.0,
+      state.screenSize.width - LayoutConstants.rocketSize.width,
+    );
+
+    final fixedY = state.position.dy;
+
+    emit(state.copyWith(position: Offset(clampedX, fixedY)));
+  }
+
   void _onScreenInitialized(
-      RocketScreenInitializedEvent event, Emitter<RocketState> emit) {
+    RocketScreenInitializedEvent event,
+    Emitter<RocketState> emit,
+  ) {
     final centerX =
         (event.screenSize.width - LayoutConstants.rocketSize.width) / 2;
     final lowerY =

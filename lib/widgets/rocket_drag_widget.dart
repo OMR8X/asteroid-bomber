@@ -20,8 +20,16 @@ class RocketDragWidget extends StatelessWidget {
             builder: (context, state) {
               return GestureDetector(
                 onPanUpdate: (details) {
+                  final RenderBox renderBox =
+                      context.findRenderObject() as RenderBox;
+                  final localPosition =
+                      renderBox.globalToLocal(details.globalPosition);
+
+                  final rocketX =
+                      localPosition.dx - LayoutConstants.rocketSize.width / 2;
+
                   context.read<RocketBloc>().add(
-                        RocketPositionUpdatedEvent(Offset(details.delta.dx, 0)),
+                        RocketPositionChangedEvent(Offset(rocketX, 0)),
                       );
                 },
                 child: Stack(
