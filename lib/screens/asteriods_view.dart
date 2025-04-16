@@ -5,6 +5,8 @@ import 'package:asteroid_bomber/blocs/asteriods_bloc/asteriods_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../resources/asteroids_resources.dart';
+
 class AsteroidsView extends StatefulWidget {
   const AsteroidsView({super.key});
 
@@ -21,15 +23,17 @@ class _AsteroidsViewState extends State<AsteroidsView> {
     super.initState();
     asteroidsBloc = AsteroidsBloc();
     asteroidsBloc.add(AddAsteroidEvent());
+    int noAsteroids = 0;
     asteroidTimer = Timer.periodic(Duration(milliseconds: 300), (timer) {
-      asteroidsBloc.add(UpdateAsteroidEvent());
 
-      // 10%
-      if (Random().nextInt(100) < 10) {
+      asteroidsBloc.add(UpdateAsteroidEvent(screenHeight: MediaQuery.sizeOf(context).height));
+      if (Random().nextInt(100) < (100 - noAsteroids * (100 / AsteroidsResources.maxNoAsteroids))) {
         asteroidsBloc.add(AddAsteroidEvent());
+        noAsteroids = asteroidsBloc.state.asteroids.length;
       }
     });
   }
+  
 
   @override
   void dispose() {
@@ -54,8 +58,7 @@ class _AsteroidsViewState extends State<AsteroidsView> {
                       key: ValueKey(asteroid.id),
                       duration: Duration(milliseconds: 300),
                       curve: Curves.linear,
-                      left: asteroid.line *
-                          (MediaQuery.sizeOf(context).width / 7),
+                      left: asteroid.line * (MediaQuery.sizeOf(context).width / AsteroidsResources.maxNoLine),
                       top: asteroid.position,
                       child: SizedBox(
                         width: 50,
