@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:asteroid_bomber/blocs/asteriods_bloc/asteriods_bloc.dart';
-import 'package:asteroid_bomber/resources/colors_resources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -24,6 +23,7 @@ class _AsteroidsViewState extends State<AsteroidsView> {
     asteroidsBloc.add(AddAsteroidEvent());
     asteroidTimer = Timer.periodic(Duration(milliseconds: 300), (timer) {
       asteroidsBloc.add(UpdateAsteroidEvent());
+
       // 10%
       if (Random().nextInt(100) < 10) {
         asteroidsBloc.add(AddAsteroidEvent());
@@ -54,7 +54,8 @@ class _AsteroidsViewState extends State<AsteroidsView> {
                       key: ValueKey(asteroid.id),
                       duration: Duration(milliseconds: 300),
                       curve: Curves.linear,
-                      left: asteroid.line * (MediaQuery.sizeOf(context).width / 7),
+                      left: asteroid.line *
+                          (MediaQuery.sizeOf(context).width / 7),
                       top: asteroid.position,
                       child: SizedBox(
                         width: 50,

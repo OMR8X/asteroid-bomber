@@ -2,7 +2,7 @@ import 'package:asteroid_bomber/resources/colors_resources.dart';
 import 'package:asteroid_bomber/screens/asteriods_view.dart';
 import 'package:flutter/material.dart';
 
-import 'rocket_drag.dart';
+import '../widgets/rocket_drag_widget.dart';
 
 class CanvasView extends StatefulWidget {
   const CanvasView({super.key});
@@ -26,7 +26,7 @@ class _CanvasViewState extends State<CanvasView> {
             child: Stack(
               children: [
                 const AsteroidsView(),
-                RocketDragView(),
+                RocketDragWidget(),
               ],
             ),
           ),
