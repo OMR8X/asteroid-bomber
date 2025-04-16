@@ -32,6 +32,7 @@ class _AsteroidsViewState extends State<AsteroidsView> {
       }
     });
   }
+  
 
   @override
   void dispose() {
