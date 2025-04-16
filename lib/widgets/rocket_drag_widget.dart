@@ -20,17 +20,9 @@ class RocketDragWidget extends StatelessWidget {
             builder: (context, state) {
               return GestureDetector(
                 onPanUpdate: (details) {
-                  final touchY = details.globalPosition.dy;
-                  if (touchY < state.lowerBoundY) {
-                    context.read<RocketBloc>().add(
-                          RocketPositionUpdatedEvent(
-                              Offset(details.delta.dx, 0)),
-                        );
-                  } else {
-                    context.read<RocketBloc>().add(
-                          RocketPositionUpdatedEvent(details.delta),
-                        );
-                  }
+                  context.read<RocketBloc>().add(
+                        RocketPositionUpdatedEvent(Offset(details.delta.dx, 0)),
+                      );
                 },
                 child: Stack(
                   children: [

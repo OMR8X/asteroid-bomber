@@ -13,13 +13,13 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
   }
 
   void _onPositionUpdated(
-      RocketPositionUpdatedEvent event, Emitter<RocketState> emit) {
+    RocketPositionUpdatedEvent event,
+    Emitter<RocketState> emit,
+  ) {
     final newX = (state.position.dx + event.offset.dx)
         .clamp(0.0, state.screenSize.width - LayoutConstants.rocketSize.width);
-    final newY = (state.position.dy + event.offset.dy).clamp(
-      state.lowerBoundY,
-      state.screenSize.height - LayoutConstants.rocketSize.height,
-    );
+
+    final newY = state.position.dy;
 
     emit(state.copyWith(position: Offset(newX, newY)));
   }
