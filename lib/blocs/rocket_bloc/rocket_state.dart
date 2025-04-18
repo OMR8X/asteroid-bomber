@@ -1,36 +1,41 @@
 part of 'rocket_bloc.dart';
 
 class RocketState extends Equatable {
-  final Offset position;
+  final Offset rocketPosition;
   final Size screenSize;
   final double lowerBoundY;
+  final List<BulletModel> bullets;
 
   const RocketState({
-    required this.position,
+    required this.rocketPosition,
     required this.screenSize,
     required this.lowerBoundY,
+    required this.bullets,
   });
 
   factory RocketState.initial() {
     return const RocketState(
-      position: Offset.zero,
+      rocketPosition: Offset.zero,
       screenSize: Size.zero,
       lowerBoundY: 0,
+      bullets: [],
     );
   }
 
   RocketState copyWith({
-    Offset? position,
+    Offset? rocketPosition,
     Size? screenSize,
     double? lowerBoundY,
+    List<BulletModel>? bullets,
   }) {
     return RocketState(
-      position: position ?? this.position,
+      rocketPosition: rocketPosition ?? this.rocketPosition,
       screenSize: screenSize ?? this.screenSize,
       lowerBoundY: lowerBoundY ?? this.lowerBoundY,
+      bullets: bullets ?? this.bullets,
     );
   }
 
   @override
-  List<Object> get props => [position, screenSize, lowerBoundY];
+  List<Object> get props => [rocketPosition, screenSize, lowerBoundY, bullets];
 }
