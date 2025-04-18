@@ -13,12 +13,10 @@ class RocketDragWidget extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenSize = Size(constraints.maxWidth, constraints.maxHeight);
-
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final rocketBloc = context.read<RocketBloc>();
             rocketBloc.add(RocketScreenInitializedEvent());
         });
-
         return BlocBuilder<RocketBloc, RocketState>(
           builder: (context, state) {
             return GestureDetector(

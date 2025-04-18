@@ -66,8 +66,8 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
       final double cellSize = 100;
       final asteroidGrid = <Point<int>, List<Asteroid>>{};
 
-      for (final asteroid in event.asteroid) {
-        final x = asteroid.line * (event.screenWidth / AsteroidsResources.maxNoLine) + 25;
+      for (final asteroid in state.asteroids) {
+        final x = asteroid.line * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine);
         final y = asteroid.position;
         final cell = getGridCell(x, y, cellSize);
         asteroidGrid.putIfAbsent(cell, () => []).add(asteroid);
@@ -90,7 +90,7 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
             for (var i = 0; i < asteroids.length; i++) {
               final asteroid = asteroids[i];
 
-              final ax = asteroid.line * (event.screenWidth / AsteroidsResources.maxNoLine) + 25;
+              final ax = asteroid.line * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine) + 25;
               final ay = asteroid.position;
 
               final distance = sqrt(pow(ax - shootX, 2) + pow(ay - shootY, 2));
@@ -122,39 +122,3 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
     return Point((x / cellSize).floor(), (y / cellSize).floor());
   }
 }
-
-/*
-/// [First Algotithm] 
-/// O(Asteroid * Shoot)
-final updatedAsteroids = event.asteroid
-          .map((asteroid) {
-            bool gotHit = false;
-            for (final shoot in event.shoot) {
-              //
-              final asteroidX = asteroid.line * (event.screenWidth / AsteroidsResources.maxNoLine);
-              final asteroidY = asteroid.position;
-              //
-              final shootX = shoot.dx;
-              final shootY = shoot.dy;
-              //
-              const asteroidRadius = 25.0;
-              const shootRadius = 5.0;
-              //
-              final dx = asteroidX - shootX;
-              final dy = asteroidY - shootY;
-              final distance = sqrt(dx * dx + dy * dy);
-              //
-              if (distance < (asteroidRadius + shootRadius)) {
-                gotHit = true;
-                break;
-              }
-            }
-            if (gotHit) {
-              return asteroid.copyWith(hp: asteroid.hp - 50);
-            }
-            return asteroid;
-          })
-          .where((a) => a.hp > 0)
-          .toList();
-      emit(state.copyWith(asteriods: updatedAsteroids));
-*/

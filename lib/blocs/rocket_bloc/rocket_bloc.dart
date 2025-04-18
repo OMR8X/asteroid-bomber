@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:asteroid_bomber/blocs/asteriods_bloc/asteriods_bloc.dart';
 import 'package:asteroid_bomber/constants/layout_constants.dart';
 import 'package:asteroid_bomber/models/bullet_model.dart';
 import 'package:asteroid_bomber/models/screen_size.dart';
@@ -68,7 +69,12 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
             ))
         .where((bullet) => bullet.position.dy > -50)
         .toList();
-
+    sl<AsteroidsBloc>().add(
+      DamagedAsteroidEvent(
+        ship: state.rocketPosition,
+        shoot: updatedBullets.map((e) => e.position).toList(),
+      ),
+    );
     emit(state.copyWith(bullets: updatedBullets));
   }
 }
