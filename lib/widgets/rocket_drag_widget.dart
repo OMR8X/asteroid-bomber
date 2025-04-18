@@ -1,9 +1,9 @@
+import 'package:asteroid_bomber/widgets/bullet_painter_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../blocs/rocket_drag_bloc/rocket_bloc.dart';
-
-import '../../resources/images_resources.dart';
-import '../../constants/layout_constants.dart';
+import '../blocs/game_bloc/game_bloc.dart';
+import '../resources/images_resources.dart';
+import '../constants/layout_constants.dart';
 
 class RocketDragWidget extends StatelessWidget {
   const RocketDragWidget({super.key});
@@ -13,43 +13,58 @@ class RocketDragWidget extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenSize = Size(constraints.maxWidth, constraints.maxHeight);
-        return BlocProvider(
-          create: (_) =>
-              RocketBloc()..add(RocketScreenInitializedEvent(screenSize)),
-          child: BlocBuilder<RocketBloc, RocketState>(
-            builder: (context, state) {
-              return GestureDetector(
-                onPanUpdate: (details) {
-                  final RenderBox renderBox =
-                      context.findRenderObject() as RenderBox;
-                  final localPosition =
-                      renderBox.globalToLocal(details.globalPosition);
 
-                  final rocketX =
-                      localPosition.dx - LayoutConstants.rocketSize.width / 2;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final gameBloc = context.read<GameBloc>();
+          if (gameBloc.state.screenSize == Size.zero) {
+            gameBloc.add(RocketScreenInitializedEvent(screenSize));
+          }
+        });
 
-                  context.read<RocketBloc>().add(
-                        RocketPositionChangedEvent(Offset(rocketX, 0)),
-                      );
-                },
-                child: Stack(
-                  children: [
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 50),
-                      curve: Curves.easeOut,
-                      left: state.position.dx,
-                      top: state.position.dy,
-                      child: Image.asset(
-                        ImagesResources.rocketImagePath,
-                        width: LayoutConstants.rocketSize.width,
-                        height: LayoutConstants.rocketSize.height,
+        return BlocBuilder<GameBloc, GameState>(
+          builder: (context, state) {
+            return GestureDetector(
+              onTapDown: (details) {
+                final newX = details.localPosition.dx -
+                    (LayoutConstants.rocketSize.width / 2);
+
+                context.read<GameBloc>().add(
+                      RocketPositionChangedEvent(
+                        Offset(newX, state.rocketPosition.dy),
                       ),
+                    );
+              },
+              onPanUpdate: (details) {
+                final localDx = details.localPosition.dx;
+                final rocketWidth = LayoutConstants.rocketSize.width;
+
+                final newX = localDx - rocketWidth / 2;
+                context.read<GameBloc>().add(
+                      RocketPositionChangedEvent(
+                          Offset(newX, state.rocketPosition.dy)),
+                    );
+              },
+              child: Stack(
+                children: [
+                  CustomPaint(
+                    size: screenSize,
+                    painter: BulletPainter(
+                      state.bullets.map((b) => b.position).toList(),
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
+                  ),
+                  Positioned(
+                    left: state.rocketPosition.dx,
+                    top: state.rocketPosition.dy,
+                    child: Image.asset(
+                      ImagesResources.rocketImagePath,
+                      width: LayoutConstants.rocketSize.width,
+                      height: LayoutConstants.rocketSize.height,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
