@@ -7,15 +7,16 @@ sealed class AsteroidsEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AddAsteroidEvent extends AsteroidsEvent {}
+class AddAsteroidEvent extends AsteroidsEvent {
+
+  const AddAsteroidEvent();
+}
 
 class UpdateAsteroidEvent extends AsteroidsEvent {
-  final double screenHeight;
-
-  const UpdateAsteroidEvent({required this.screenHeight});
+  const UpdateAsteroidEvent();
 
   @override
-  List<Object> get props => [screenHeight];
+  List<Object> get props => [];
 }
 
 class DamagedAsteroidEvent extends AsteroidsEvent {

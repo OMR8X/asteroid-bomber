@@ -1,11 +1,11 @@
 import 'dart:math';
-
+import 'package:asteroid_bomber/models/screen_size.dart';
 import 'package:asteroid_bomber/resources/asteroids_resources.dart';
 import 'package:asteroid_bomber/resources/images_resources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-
+import '../../injection/app_inj.dart';
 import '../../models/asteroid.dart';
 
 part 'asteriods_event.dart';
@@ -35,13 +35,16 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
         id: _idCounter++,
         hp: 100 * asteroidSize,
         line: newLine,
-        speed: 30 + random.nextDouble() * 6,
+        speed: 4 + random.nextDouble() * 2,
         imagePath: "${ImagesResources.asteroidImagePath}$imgPathNum.png",
         position: safeTop,
       );
       emit(AsteroidsState(asteroids: [...state.asteroids, newAsteroid]));
     });
     on<UpdateAsteroidEvent>((event, emit) {
+      if (Random().nextInt(100) < (100 - state.asteroids.length * (100 / AsteroidsResources.maxNoAsteroids))) {
+        sl<AsteroidsBloc>().add(AddAsteroidEvent());
+      }
       final updated = state.asteroids
           .map((asteroid) => Asteroid(
                 id: asteroid.id,
@@ -51,7 +54,7 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
                 imagePath: asteroid.imagePath,
                 position: asteroid.position + asteroid.speed,
               ))
-          .where((a) => a.position < event.screenHeight)
+          .where((a) => a.position < sl<ScreenSize>().height)
           .toList();
 
       emit(state.copyWith(asteriods: updated));
@@ -106,11 +109,11 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
       }
 
       // أضف الكويكبات اللي ما انضربت
-      asteroidGrid.values.forEach((list) {
+      for (var list in asteroidGrid.values) {
         for (final a in list) {
           if (!updated.contains(a)) updated.add(a);
         }
-      });
+      }
 
       emit(state.copyWith(asteriods: updated));
     });

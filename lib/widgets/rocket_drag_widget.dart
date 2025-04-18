@@ -16,9 +16,7 @@ class RocketDragWidget extends StatelessWidget {
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final rocketBloc = context.read<RocketBloc>();
-          if (rocketBloc.state.screenSize == Size.zero) {
-            rocketBloc.add(RocketScreenInitializedEvent(screenSize));
-          }
+            rocketBloc.add(RocketScreenInitializedEvent());
         });
 
         return BlocBuilder<RocketBloc, RocketState>(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/rocket_bloc/rocket_bloc.dart';
+import '../injection/app_inj.dart';
 import '../widgets/rocket_drag_widget.dart';
 
 class CanvasView extends StatefulWidget {
@@ -16,8 +17,8 @@ class CanvasView extends StatefulWidget {
 class _CanvasViewState extends State<CanvasView> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => RocketBloc(),
+    return BlocProvider.value(
+      value: sl<RocketBloc>(),
       child: Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(

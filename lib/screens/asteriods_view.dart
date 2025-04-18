@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:asteroid_bomber/blocs/asteriods_bloc/asteriods_bloc.dart';
+import 'package:asteroid_bomber/injection/app_inj.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,22 +16,14 @@ class AsteroidsView extends StatefulWidget {
 }
 
 class _AsteroidsViewState extends State<AsteroidsView> with SingleTickerProviderStateMixin {
-  late AsteroidsBloc asteroidsBloc;
   late Timer asteroidTimer;
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    asteroidsBloc = AsteroidsBloc();
-    asteroidsBloc.add(AddAsteroidEvent());
-    int noAsteroids = 0;
-    asteroidTimer = Timer.periodic(Duration(milliseconds: 300), (timer) {
-      asteroidsBloc.add(UpdateAsteroidEvent(screenHeight: MediaQuery.sizeOf(context).height));
-      if (Random().nextInt(100) < (100 - noAsteroids * (100 / AsteroidsResources.maxNoAsteroids))) {
-        asteroidsBloc.add(AddAsteroidEvent());
-        noAsteroids = asteroidsBloc.state.asteroids.length;
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      sl<AsteroidsBloc>().add(AddAsteroidEvent());
     });
     _controller = AnimationController(
       vsync: this,
@@ -41,14 +34,13 @@ class _AsteroidsViewState extends State<AsteroidsView> with SingleTickerProvider
   @override
   void dispose() {
     asteroidTimer.cancel();
-    asteroidsBloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: asteroidsBloc,
+      value: sl<AsteroidsBloc>(),
       child: Container(
         color: Colors.transparent,
         child: Stack(
