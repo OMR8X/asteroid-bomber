@@ -14,9 +14,10 @@ class AsteroidsView extends StatefulWidget {
   State<AsteroidsView> createState() => _AsteroidsViewState();
 }
 
-class _AsteroidsViewState extends State<AsteroidsView> {
+class _AsteroidsViewState extends State<AsteroidsView> with SingleTickerProviderStateMixin {
   late AsteroidsBloc asteroidsBloc;
   late Timer asteroidTimer;
+  late AnimationController _controller;
 
   @override
   void initState() {
@@ -25,15 +26,17 @@ class _AsteroidsViewState extends State<AsteroidsView> {
     asteroidsBloc.add(AddAsteroidEvent());
     int noAsteroids = 0;
     asteroidTimer = Timer.periodic(Duration(milliseconds: 300), (timer) {
-
       asteroidsBloc.add(UpdateAsteroidEvent(screenHeight: MediaQuery.sizeOf(context).height));
       if (Random().nextInt(100) < (100 - noAsteroids * (100 / AsteroidsResources.maxNoAsteroids))) {
         asteroidsBloc.add(AddAsteroidEvent());
         noAsteroids = asteroidsBloc.state.asteroids.length;
       }
     });
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
   }
-  
 
   @override
   void dispose() {
@@ -60,10 +63,13 @@ class _AsteroidsViewState extends State<AsteroidsView> {
                       curve: Curves.linear,
                       left: asteroid.line * (MediaQuery.sizeOf(context).width / AsteroidsResources.maxNoLine),
                       top: asteroid.position,
-                      child: SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: Image.asset(asteroid.imagePath),
+                      child: RotationTransition(
+                        turns: _controller,
+                        child: SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: Image.asset(asteroid.imagePath),
+                        ),
                       ),
                     );
                   }).toList(),

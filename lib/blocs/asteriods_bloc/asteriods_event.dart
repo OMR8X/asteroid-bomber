@@ -18,4 +18,17 @@ class UpdateAsteroidEvent extends AsteroidsEvent {
   List<Object> get props => [screenHeight];
 }
 
-class DamagedAsteroidEvent extends AsteroidsEvent {}
+class DamagedAsteroidEvent extends AsteroidsEvent {
+  final List<Asteroid> asteroid;
+  final List<Offset> shoot;
+  final double screenWidth;
+
+  const DamagedAsteroidEvent({
+    required this.asteroid,
+    required this.shoot,
+    required this.screenWidth,
+  });
+
+  @override
+  List<Object> get props => [asteroid, shoot, screenWidth];
+}

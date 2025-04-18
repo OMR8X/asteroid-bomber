@@ -16,4 +16,15 @@ class Asteroid {
     required this.imagePath,
     this.position = AsteroidsResources.startPosition,
   });
+
+  Asteroid copyWith({int? hp}) {
+    return Asteroid(
+      id: id,
+      hp: hp ?? this.hp,
+      speed: speed,
+      line: line,
+      imagePath: imagePath,
+      position: position,
+    );
+  }
 }
