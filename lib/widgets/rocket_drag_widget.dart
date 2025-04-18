@@ -15,20 +15,20 @@ class RocketDragWidget extends StatelessWidget {
         final screenSize = Size(constraints.maxWidth, constraints.maxHeight);
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          final gameBloc = context.read<GameBloc>();
+          final gameBloc = context.read<RocketBloc>();
           if (gameBloc.state.screenSize == Size.zero) {
             gameBloc.add(RocketScreenInitializedEvent(screenSize));
           }
         });
 
-        return BlocBuilder<GameBloc, GameState>(
+        return BlocBuilder<RocketBloc, RocketState>(
           builder: (context, state) {
             return GestureDetector(
               onTapDown: (details) {
                 final newX = details.localPosition.dx -
                     (LayoutConstants.rocketSize.width / 2);
 
-                context.read<GameBloc>().add(
+                context.read<RocketBloc>().add(
                       RocketPositionChangedEvent(
                         Offset(newX, state.rocketPosition.dy),
                       ),
@@ -39,7 +39,7 @@ class RocketDragWidget extends StatelessWidget {
                 final rocketWidth = LayoutConstants.rocketSize.width;
 
                 final newX = localDx - rocketWidth / 2;
-                context.read<GameBloc>().add(
+                context.read<RocketBloc>().add(
                       RocketPositionChangedEvent(
                           Offset(newX, state.rocketPosition.dy)),
                     );

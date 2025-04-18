@@ -11,13 +11,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'game_event.dart';
 part 'game_state.dart';
 
-class GameBloc extends Bloc<GameEvent, GameState> {
+class RocketBloc extends Bloc<RocketEvent, RocketState> {
   Timer? _autoFireTimer;
   Timer? _bulletUpdateTimer;
   static const double bulletSpeed = 10.0;
   static const Duration firingInterval = Duration(milliseconds: 250);
 
-  GameBloc() : super(GameState.initial()) {
+  RocketBloc() : super(RocketState.initial()) {
     // Rocket events
     on<RocketPositionUpdatedEvent>(_onRocketPositionUpdated);
     on<RocketPositionChangedEvent>(_onRocketPositionChanged);
@@ -37,7 +37,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   // Rocket event handlers
   void _onRocketPositionUpdated(
     RocketPositionUpdatedEvent event,
-    Emitter<GameState> emit,
+    Emitter<RocketState> emit,
   ) {
     final newX = (state.rocketPosition.dx + event.offset.dx)
         .clamp(0.0, state.screenSize.width - LayoutConstants.rocketSize.width);
@@ -52,7 +52,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   void _onRocketPositionChanged(
     RocketPositionChangedEvent event,
-    Emitter<GameState> emit,
+    Emitter<RocketState> emit,
   ) {
     final clampedX = event.position.dx.clamp(
       0.0,
@@ -67,7 +67,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   void _onRocketScreenInitialized(
     RocketScreenInitializedEvent event,
-    Emitter<GameState> emit,
+    Emitter<RocketState> emit,
   ) {
     final centerX =
         (event.screenSize.width - LayoutConstants.rocketSize.width) / 2;
@@ -85,7 +85,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   // Bullet event handlers
-  void _onBulletFired(BulletFiredEvent event, Emitter<GameState> emit) {
+  void _onBulletFired(BulletFiredEvent event, Emitter<RocketState> emit) {
     final newBullet = BulletModel(
       imageUrl: ImagesResources.rocketImagePath,
       position: event.startPosition,
@@ -94,7 +94,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     emit(state.copyWith(bullets: [...state.bullets, newBullet]));
   }
 
-  void _onBulletsUpdated(BulletsUpdatedEvent event, Emitter<GameState> emit) {
+  void _onBulletsUpdated(BulletsUpdatedEvent event, Emitter<RocketState> emit) {
     final updatedBullets = state.bullets
         .whereType<BulletModel>()
         .map((bullet) => bullet.copyWith(
@@ -109,11 +109,11 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     emit(state.copyWith(bullets: updatedBullets));
   }
 
-  void _onStartAutoFire(StartAutoFireEvent event, Emitter<GameState> emit) {
+  void _onStartAutoFire(StartAutoFireEvent event, Emitter<RocketState> emit) {
     _startAutoFiring();
   }
 
-  void _onStopAutoFire(StopAutoFireEvent event, Emitter<GameState> emit) {
+  void _onStopAutoFire(StopAutoFireEvent event, Emitter<RocketState> emit) {
     _autoFireTimer?.cancel();
   }
 

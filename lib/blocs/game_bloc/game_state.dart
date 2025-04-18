@@ -1,20 +1,20 @@
 part of 'game_bloc.dart';
 
-class GameState extends Equatable {
+class RocketState extends Equatable {
   final Offset rocketPosition;
   final Size screenSize;
   final double lowerBoundY;
   final List<BulletModel> bullets;
 
-  const GameState({
+  const RocketState({
     required this.rocketPosition,
     required this.screenSize,
     required this.lowerBoundY,
     required this.bullets,
   });
 
-  factory GameState.initial() {
-    return const GameState(
+  factory RocketState.initial() {
+    return const RocketState(
       rocketPosition: Offset.zero,
       screenSize: Size.zero,
       lowerBoundY: 0,
@@ -22,13 +22,13 @@ class GameState extends Equatable {
     );
   }
 
-  GameState copyWith({
+  RocketState copyWith({
     Offset? rocketPosition,
     Size? screenSize,
     double? lowerBoundY,
     List<BulletModel>? bullets,
   }) {
-    return GameState(
+    return RocketState(
       rocketPosition: rocketPosition ?? this.rocketPosition,
       screenSize: screenSize ?? this.screenSize,
       lowerBoundY: lowerBoundY ?? this.lowerBoundY,

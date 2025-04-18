@@ -17,7 +17,7 @@ class _CanvasViewState extends State<CanvasView> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GameBloc(),
+      create: (context) => RocketBloc(),
       child: Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(
