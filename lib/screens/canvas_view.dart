@@ -1,5 +1,6 @@
 import 'package:asteroid_bomber/resources/colors_resources.dart';
 import 'package:asteroid_bomber/screens/asteriods_view.dart';
+import 'package:asteroid_bomber/widgets/background_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,9 +24,9 @@ class _CanvasViewState extends State<CanvasView> {
         backgroundColor: Colors.black,
         body: SafeArea(
           child: Container(
-            color: ColorsResources.surface,
             child: Stack(
               children: [
+                BackTo(),
                 const AsteroidsView(),
                 RocketDragWidget(),
               ],
