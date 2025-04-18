@@ -1,20 +1,10 @@
-part of 'game_bloc.dart';
+part of 'rocket_bloc.dart';
 
 abstract class RocketEvent extends Equatable {
   const RocketEvent();
 
   @override
   List<Object> get props => [];
-}
-
-// Rocket events
-class RocketPositionUpdatedEvent extends RocketEvent {
-  final Offset offset;
-
-  const RocketPositionUpdatedEvent(this.offset);
-
-  @override
-  List<Object> get props => [offset];
 }
 
 class RocketPositionChangedEvent extends RocketEvent {
@@ -35,7 +25,6 @@ class RocketScreenInitializedEvent extends RocketEvent {
   List<Object> get props => [screenSize];
 }
 
-// Bullet events
 class BulletFiredEvent extends RocketEvent {
   final Offset startPosition;
 
@@ -46,7 +35,3 @@ class BulletFiredEvent extends RocketEvent {
 }
 
 class BulletsUpdatedEvent extends RocketEvent {}
-
-class StartAutoFireEvent extends RocketEvent {}
-
-class StopAutoFireEvent extends RocketEvent {}

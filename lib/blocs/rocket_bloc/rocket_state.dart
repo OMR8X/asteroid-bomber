@@ -1,4 +1,4 @@
-part of 'game_bloc.dart';
+part of 'rocket_bloc.dart';
 
 class RocketState extends Equatable {
   final Offset rocketPosition;

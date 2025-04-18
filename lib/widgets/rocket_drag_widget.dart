@@ -1,7 +1,7 @@
 import 'package:asteroid_bomber/widgets/bullet_painter_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/game_bloc/game_bloc.dart';
+import '../blocs/rocket_bloc/rocket_bloc.dart';
 import '../resources/images_resources.dart';
 import '../constants/layout_constants.dart';
 
@@ -15,9 +15,9 @@ class RocketDragWidget extends StatelessWidget {
         final screenSize = Size(constraints.maxWidth, constraints.maxHeight);
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          final gameBloc = context.read<RocketBloc>();
-          if (gameBloc.state.screenSize == Size.zero) {
-            gameBloc.add(RocketScreenInitializedEvent(screenSize));
+          final rocketBloc = context.read<RocketBloc>();
+          if (rocketBloc.state.screenSize == Size.zero) {
+            rocketBloc.add(RocketScreenInitializedEvent(screenSize));
           }
         });
 

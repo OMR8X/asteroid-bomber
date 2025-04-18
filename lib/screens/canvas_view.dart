@@ -3,7 +3,7 @@ import 'package:asteroid_bomber/screens/asteriods_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../blocs/game_bloc/game_bloc.dart';
+import '../blocs/rocket_bloc/rocket_bloc.dart';
 import '../widgets/rocket_drag_widget.dart';
 
 class CanvasView extends StatefulWidget {
