@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:asteroid_bomber/blocs/asteriods_bloc/asteriods_bloc.dart';
@@ -10,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../injection/app_inj.dart';
+import '../../resources/asteroids_resources.dart';
 
 part 'rocket_event.dart';
 part 'rocket_state.dart';
@@ -69,12 +69,25 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
             ))
         .where((bullet) => bullet.position.dy > -50)
         .toList();
+    final bulletPositions = updatedBullets.map((b) => b.position).toList();
     sl<AsteroidsBloc>().add(
       DamagedAsteroidEvent(
         ship: state.rocketPosition,
-        shoot: updatedBullets.map((e) => e.position).toList(),
+        shoot: bulletPositions,
       ),
     );
-    emit(state.copyWith(bullets: updatedBullets));
+
+    final newUpdatedBullets = updatedBullets.where((bullet) {
+      for (final asteroid in sl<AsteroidsBloc>().state.asteroids) {
+        final ax = (asteroid.line - 0.5) * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine);
+        final ay = asteroid.position + (25);
+        final distance = (bullet.position - Offset(ax, ay)).distance;
+
+        if (distance < 25) return false; // معناها أصابت الكويكب
+      }
+      return bullet.position.dy > -50; // ما طلعت من الشاشة
+    }).toList();
+
+    emit(state.copyWith(bullets: newUpdatedBullets));
   }
 }
