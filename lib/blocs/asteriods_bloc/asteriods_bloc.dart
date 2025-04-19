@@ -35,7 +35,7 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
         id: _idCounter++,
         hp: 100 * asteroidSize,
         line: newLine,
-        speed: 1 + random.nextDouble(),
+        speed: 1 + (2 / asteroidSize),
         imagePath: "${ImagesResources.asteroidImagePath}$imgPathNum.png",
         position: safeTop,
         isExploding: false,
@@ -48,14 +48,17 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
       }
       final now = DateTime.now();
       final updated = state.asteroids.where((a) {
+        if (a.hp < 0) {
+          return false;
+        }
         if (a.isExploding) {
           final duration = now.difference(a.explosionStartTime!);
-          return duration.inMilliseconds < 400;
+          return duration.inMilliseconds < 100;
         }
         return a.position < sl<ScreenSize>().height;
       }).map((asteroid) {
         if (!asteroid.isExploding) {
-          return asteroid.copyWith(position: asteroid.position + asteroid.speed);
+          return asteroid.copyWith(position: asteroid.position + asteroid.speed / (asteroid.hp / 100));
         }
         return asteroid;
       }).toList();
@@ -82,7 +85,6 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
         final shootX = shoot.dx + 3;
         final shootY = shoot.dy + 6;
         final shootCell = getGridCell(shootX, shootY, cellSize);
-
         // مر على الخلية والجيران فقط (3x3 مربعات)
         for (int dx = -1; dx <= 1; dx++) {
           for (int dy = -1; dy <= 1; dy++) {
@@ -97,7 +99,7 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
               final ay = asteroid.position + 25;
 
               final distance = sqrt(pow(ax - shootX, 2) + pow(ay - shootY, 2));
-              if (distance < 25) {
+              if (distance < 25 && asteroid.explosionStartTime == null) {
                 // ضرَب الكويكب
                 final updatedAsteroid = asteroid.copyWith(hp: asteroid.hp - 50);
                 if (updatedAsteroid.hp > 0) {
@@ -110,7 +112,6 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
                     explosionStartTime: DateTime.now(),
                   ));
                 }
-
                 // إحذف من الشبكة حتى ما ينضرب مرتين
                 asteroids.removeAt(i);
                 break;

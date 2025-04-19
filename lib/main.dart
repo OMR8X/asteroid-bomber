@@ -58,7 +58,6 @@ startUpdateFramesTimer() {
 /// [ main , asteroids_improvement ]
 /// [git push origin asteroids_improvement]
 ///
-///
 /// [ ***GIT COMMANDS*** ]
 ///
 /// [ GIT ADD & COMMIT ]
@@ -76,6 +75,5 @@ startUpdateFramesTimer() {
 /// git checkout -b "NAME"
 /// [DELETE BRANCH]
 /// git branch -D "NAME"
-
 /// [SWITCH TO REMOTE BRANCH]
 /// git checkout --track origin/"NAME"

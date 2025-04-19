@@ -50,18 +50,16 @@ class _AsteroidsViewState extends State<AsteroidsView> with SingleTickerProvider
                   children: state.asteroids.map((asteroid) {
                     final left = (asteroid.line - 0.5) * (MediaQuery.sizeOf(context).width / AsteroidsResources.maxNoLine) - 25;
                     final top = asteroid.position;
-
                     if (asteroid.isExploding && asteroid.explosionStartTime != null) {
                       final progress = DateTime.now().difference(asteroid.explosionStartTime!).inMilliseconds / 200;
                       final size = 50 + 30 * (0.5 - (progress - 0.5).abs()); // تكبر وتصغر
-
                       return Positioned(
                         key: ValueKey('explosion_${asteroid.id}'),
-                        left: left,
+                        left: left + size / 8,
                         top: top,
                         child: Container(
-                          width: size,
-                          height: size,
+                          width: size / 2,
+                          height: size / 2,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.white,

@@ -40,10 +40,8 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
     RocketScreenInitializedEvent event,
     Emitter<RocketState> emit,
   ) {
-    final centerX =
-        (sl<ScreenSize>().width - LayoutConstants.rocketSize.width) / 2;
-    final lowerY =
-        sl<ScreenSize>().height * LayoutConstants.rocketInitialYOffsetFraction;
+    final centerX = (sl<ScreenSize>().width - LayoutConstants.rocketSize.width) / 2;
+    final lowerY = sl<ScreenSize>().height * LayoutConstants.rocketInitialYOffsetFraction;
 
     emit(state.copyWith(
       rocketPosition: Offset(centerX, lowerY),
@@ -85,7 +83,7 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
         final ay = asteroid.position + (25);
         final distance = (bullet.position - Offset(ax, ay)).distance;
 
-        if (distance < 25) return false; // معناها أصابت الكويكب
+        if (distance < 15 && asteroid.explosionStartTime == null) return false; // معناها أصابت الكويكب
       }
       return bullet.position.dy > -50; // ما طلعت من الشاشة
     }).toList();
