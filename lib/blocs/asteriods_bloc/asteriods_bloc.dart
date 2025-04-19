@@ -17,7 +17,7 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
     on<AddAsteroidEvent>((event, emit) {
       //
       final random = Random();
-      final int newLine = random.nextInt(AsteroidsResources.maxNoLine);
+      final int newLine = random.nextInt(AsteroidsResources.maxNoLine) + 1;
       final lineAsteroids = state.asteroids.where((a) => a.line == newLine).toList();
       double safeTop = AsteroidsResources.startPosition;
       if (lineAsteroids.isNotEmpty) {
@@ -35,9 +35,10 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
         id: _idCounter++,
         hp: 100 * asteroidSize,
         line: newLine,
-        speed: 4 + random.nextDouble() * 2,
+        speed: 1 + random.nextDouble(),
         imagePath: "${ImagesResources.asteroidImagePath}$imgPathNum.png",
         position: safeTop,
+        isExploding: false,
       );
       emit(AsteroidsState(asteroids: [...state.asteroids, newAsteroid]));
     });
@@ -45,17 +46,19 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
       if (Random().nextInt(100) < (100 - state.asteroids.length * (100 / AsteroidsResources.maxNoAsteroids))) {
         sl<AsteroidsBloc>().add(AddAsteroidEvent());
       }
-      final updated = state.asteroids
-          .map((asteroid) => Asteroid(
-                id: asteroid.id,
-                line: asteroid.line,
-                speed: asteroid.speed,
-                hp: asteroid.hp,
-                imagePath: asteroid.imagePath,
-                position: asteroid.position + asteroid.speed,
-              ))
-          .where((a) => a.position < sl<ScreenSize>().height)
-          .toList();
+      final now = DateTime.now();
+      final updated = state.asteroids.where((a) {
+        if (a.isExploding) {
+          final duration = now.difference(a.explosionStartTime!);
+          return duration.inMilliseconds < 400;
+        }
+        return a.position < sl<ScreenSize>().height;
+      }).map((asteroid) {
+        if (!asteroid.isExploding) {
+          return asteroid.copyWith(position: asteroid.position + asteroid.speed);
+        }
+        return asteroid;
+      }).toList();
 
       emit(state.copyWith(asteriods: updated));
     });
@@ -67,7 +70,7 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
       final asteroidGrid = <Point<int>, List<Asteroid>>{};
 
       for (final asteroid in state.asteroids) {
-        final x = asteroid.line * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine);
+        final x = (asteroid.line - 0.5) * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine) - 25;
         final y = asteroid.position;
         final cell = getGridCell(x, y, cellSize);
         asteroidGrid.putIfAbsent(cell, () => []).add(asteroid);
@@ -76,8 +79,8 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
       final updated = <Asteroid>[];
 
       for (final shoot in event.shoot) {
-        final shootX = shoot.dx;
-        final shootY = shoot.dy;
+        final shootX = shoot.dx + 3;
+        final shootY = shoot.dy + 6;
         final shootCell = getGridCell(shootX, shootY, cellSize);
 
         // مر على الخلية والجيران فقط (3x3 مربعات)
@@ -90,14 +93,23 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
             for (var i = 0; i < asteroids.length; i++) {
               final asteroid = asteroids[i];
 
-              final ax = asteroid.line * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine) + 25;
-              final ay = asteroid.position;
+              final ax = (asteroid.line - 0.5) * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine);
+              final ay = asteroid.position + 25;
 
               final distance = sqrt(pow(ax - shootX, 2) + pow(ay - shootY, 2));
-              if (distance < 30) {
+              if (distance < 25) {
                 // ضرَب الكويكب
                 final updatedAsteroid = asteroid.copyWith(hp: asteroid.hp - 50);
-                if (updatedAsteroid.hp > 0) updated.add(updatedAsteroid);
+                if (updatedAsteroid.hp > 0) {
+                  updated.add(updatedAsteroid);
+                } else {
+                  updated.add(asteroid.copyWith(
+                    hp: 0,
+                    speed: 0,
+                    isExploding: true,
+                    explosionStartTime: DateTime.now(),
+                  ));
+                }
 
                 // إحذف من الشبكة حتى ما ينضرب مرتين
                 asteroids.removeAt(i);

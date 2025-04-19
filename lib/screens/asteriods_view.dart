@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:asteroid_bomber/blocs/asteriods_bloc/asteriods_bloc.dart';
 import 'package:asteroid_bomber/injection/app_inj.dart';
@@ -49,21 +48,43 @@ class _AsteroidsViewState extends State<AsteroidsView> with SingleTickerProvider
               builder: (context, state) {
                 return Stack(
                   children: state.asteroids.map((asteroid) {
-                    return AnimatedPositioned(
-                      key: ValueKey(asteroid.id),
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.linear,
-                      left: asteroid.line * (MediaQuery.sizeOf(context).width / AsteroidsResources.maxNoLine),
-                      top: asteroid.position,
-                      child: RotationTransition(
-                        turns: _controller,
-                        child: SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Image.asset(asteroid.imagePath),
+                    final left = (asteroid.line - 0.5) * (MediaQuery.sizeOf(context).width / AsteroidsResources.maxNoLine) - 25;
+                    final top = asteroid.position;
+
+                    if (asteroid.isExploding && asteroid.explosionStartTime != null) {
+                      final progress = DateTime.now().difference(asteroid.explosionStartTime!).inMilliseconds / 200;
+                      final size = 50 + 30 * (0.5 - (progress - 0.5).abs()); // تكبر وتصغر
+
+                      return Positioned(
+                        key: ValueKey('explosion_${asteroid.id}'),
+                        left: left,
+                        top: top,
+                        child: Container(
+                          width: size,
+                          height: size,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      return AnimatedPositioned(
+                        key: ValueKey(asteroid.id),
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.linear,
+                        left: left,
+                        top: top,
+                        child: RotationTransition(
+                          turns: _controller,
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: Image.asset(asteroid.imagePath),
+                          ),
+                        ),
+                      );
+                    }
                   }).toList(),
                 );
               },
