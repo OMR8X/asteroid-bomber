@@ -1,4 +1,3 @@
-import 'package:asteroid_bomber/widgets/bullet_painter_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/rocket_bloc/rocket_bloc.dart';
@@ -12,10 +11,9 @@ class RocketDragWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final screenSize = Size(constraints.maxWidth, constraints.maxHeight);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final rocketBloc = context.read<RocketBloc>();
-            rocketBloc.add(RocketScreenInitializedEvent());
+          rocketBloc.add(RocketScreenInitializedEvent());
         });
         return BlocBuilder<RocketBloc, RocketState>(
           builder: (context, state) {
@@ -42,12 +40,15 @@ class RocketDragWidget extends StatelessWidget {
               },
               child: Stack(
                 children: [
-                  CustomPaint(
-                    size: screenSize,
-                    painter: BulletPainter(
-                      state.bullets.map((b) => b.position).toList(),
-                    ),
-                  ),
+                  ...state.bullets.map((pos) {
+                    return Positioned(
+                      left: pos.position.dx - 6,
+                      top: pos.position.dy,
+                      child: Image.asset(
+                        ImagesResources.bulletImagePath,
+                      ),
+                    );
+                  }),
                   Positioned(
                     left: state.rocketPosition.dx,
                     top: state.rocketPosition.dy,

@@ -29,8 +29,8 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
     Emitter<RocketState> emit,
   ) {
     final clampedX = event.position.dx.clamp(
-      0.0,
-      sl<ScreenSize>().width - LayoutConstants.rocketSize.width,
+      -50.0,
+      sl<ScreenSize>().width - LayoutConstants.rocketSize.width + 50,
     );
     final newPosition = Offset(clampedX, state.rocketPosition.dy);
     emit(state.copyWith(rocketPosition: newPosition));
@@ -40,8 +40,10 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
     RocketScreenInitializedEvent event,
     Emitter<RocketState> emit,
   ) {
-    final centerX = (sl<ScreenSize>().width - LayoutConstants.rocketSize.width) / 2;
-    final lowerY = sl<ScreenSize>().height * LayoutConstants.rocketInitialYOffsetFraction;
+    final centerX =
+        (sl<ScreenSize>().width - LayoutConstants.rocketSize.width) / 2;
+    final lowerY =
+        sl<ScreenSize>().height * LayoutConstants.rocketInitialYOffsetFraction;
 
     emit(state.copyWith(
       rocketPosition: Offset(centerX, lowerY),
