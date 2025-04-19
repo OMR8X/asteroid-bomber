@@ -46,9 +46,8 @@ startUpdateFramesTimer() {
     // about bloc
     sl<RocketBloc>().add(BulletsUpdatedEvent());
     //
-    if (timer.tick % 1 == 0) {
-      final rocketTipX = sl<RocketBloc>().state.rocketPosition.dx +
-          (LayoutConstants.rocketSize.width / 2);
+    if (timer.tick % 4 == 0) {
+      final rocketTipX = sl<RocketBloc>().state.rocketPosition.dx + (LayoutConstants.rocketSize.width / 2);
       final rocketTipY = sl<RocketBloc>().state.rocketPosition.dy;
       sl<RocketBloc>().add(BulletFiredEvent(Offset(rocketTipX, rocketTipY)));
     }
@@ -58,10 +57,6 @@ startUpdateFramesTimer() {
 /// [Branch]
 /// [ main , asteroids_improvement ]
 /// [git push origin asteroids_improvement]
-///
-///
-///
-///
 ///
 ///
 /// [ ***GIT COMMANDS*** ]
