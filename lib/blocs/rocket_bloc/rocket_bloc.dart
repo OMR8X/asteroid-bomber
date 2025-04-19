@@ -16,12 +16,15 @@ part 'rocket_state.dart';
 
 class RocketBloc extends Bloc<RocketEvent, RocketState> {
   static const double bulletSpeed = 12.0;
+  int rocketHealth = 3; 
   static const Duration firingInterval = Duration(milliseconds: 250);
+
   RocketBloc() : super(RocketState.initial()) {
     on<RocketPositionChangedEvent>(_onRocketPositionChanged);
     on<RocketScreenInitializedEvent>(_onRocketScreenInitialized);
     on<BulletFiredEvent>(_onBulletFired);
     on<BulletsUpdatedEvent>(_onBulletsUpdated);
+    on<RocketHealthChangedEvent>(_onRocketHealthChanged);
   }
 
   void _onRocketPositionChanged(
@@ -47,8 +50,6 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
       rocketPosition: Offset(centerX, lowerY),
       lowerBoundY: lowerY,
     ));
-
-    // _startAutoFiring();
   }
 
   void _onBulletFired(BulletFiredEvent event, Emitter<RocketState> emit) {
@@ -83,11 +84,33 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
         final ay = asteroid.position + (25);
         final distance = (bullet.position - Offset(ax, ay)).distance;
 
-        if (distance < 15 && asteroid.explosionStartTime == null) return false; // معناها أصابت الكويكب
+        if (distance < 15 && asteroid.explosionStartTime == null) return false; 
       }
-      return bullet.position.dy > -50; // ما طلعت من الشاشة
+      return bullet.position.dy > -50; // 
     }).toList();
 
     emit(state.copyWith(bullets: newUpdatedBullets));
+  }
+
+  void _onRocketHealthChanged(RocketHealthChangedEvent event, Emitter<RocketState> emit) {
+    if (rocketHealth <= 0) {
+      //TODO: اويلي جيم اوفر
+    } else {
+      
+      rocketHealth--; 
+
+      if (rocketHealth <= 0) {
+      //TODO: اويلي جيم اوفر
+
+      }
+    }
+
+    emit(state.copyWith());
+  }
+
+  void damageRocket() {
+    if (rocketHealth > 0) {
+       add(RocketHealthChangedEvent());
+    }
   }
 }

@@ -23,6 +23,7 @@ class RocketScreenInitializedEvent extends RocketEvent {
   List<Object> get props => [];
 }
 
+
 class BulletFiredEvent extends RocketEvent {
   final Offset startPosition;
 
@@ -31,5 +32,6 @@ class BulletFiredEvent extends RocketEvent {
   @override
   List<Object> get props => [startPosition];
 }
+class RocketHealthChangedEvent extends RocketEvent {}
 
 class BulletsUpdatedEvent extends RocketEvent {}
