@@ -34,3 +34,5 @@ class RocketState extends Equatable {
   @override
   List<Object> get props => [rocketPosition,  lowerBoundY, bullets];
 }
+// 
+//

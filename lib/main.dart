@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:asteroid_bomber/blocs/background_sounds_bloc/background_sounds_bloc.dart';
 import 'package:flutter/material.dart';
 import 'blocs/asteriods_bloc/asteriods_bloc.dart';
 import 'blocs/rocket_bloc/rocket_bloc.dart';
@@ -46,7 +47,7 @@ startUpdateFramesTimer() {
     // about bloc
     sl<RocketBloc>().add(BulletsUpdatedEvent());
     //
-    if (timer.tick % 4 == 0) {
+    if (timer.tick % 8 == 0) {
       final rocketTipX = sl<RocketBloc>().state.rocketPosition.dx + (LayoutConstants.rocketSize.width / 2);
       final rocketTipY = sl<RocketBloc>().state.rocketPosition.dy;
       sl<RocketBloc>().add(BulletFiredEvent(Offset(rocketTipX, rocketTipY)));

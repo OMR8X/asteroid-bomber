@@ -1,3 +1,4 @@
+import 'package:asteroid_bomber/blocs/background_sounds_bloc/background_sounds_bloc.dart';
 import 'package:asteroid_bomber/screens/asteriods_view.dart';
 import 'package:asteroid_bomber/widgets/background_widgets.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,18 @@ class CanvasView extends StatefulWidget {
 }
 
 class _CanvasViewState extends State<CanvasView> {
+  @override
+  void initState() {
+    sl<BackgroundSoundsBloc>().add(BackgroundSoundsStartEvent());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    sl<BackgroundSoundsBloc>().add(BackgroundSoundsStopEvent());
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
