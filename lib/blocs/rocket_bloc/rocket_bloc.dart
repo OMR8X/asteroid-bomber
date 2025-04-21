@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../injection/app_inj.dart';
 import '../../resources/asteroids_resources.dart';
+import '../background_sounds_bloc/background_sounds_bloc.dart';
 
 part 'rocket_event.dart';
 part 'rocket_state.dart';
@@ -54,6 +55,7 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
   void _onBulletFired(BulletFiredEvent event, Emitter<RocketState> emit) {
     final newBullet = BulletModel(
       position: event.startPosition,
+      isExploding: false,
     );
 
     emit(state.copyWith(bullets: [...state.bullets, newBullet]));
@@ -77,15 +79,35 @@ class RocketBloc extends Bloc<RocketEvent, RocketState> {
       ),
     );
 
-    final newUpdatedBullets = updatedBullets.where((bullet) {
+    final newUpdatedBullets = updatedBullets.map((bullet) {
+      bool hit = false;
+
       for (final asteroid in sl<AsteroidsBloc>().state.asteroids) {
         final ax = (asteroid.line - 0.5) * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine);
-        final ay = asteroid.position + (25);
+        final ay = asteroid.position + 25;
         final distance = (bullet.position - Offset(ax, ay)).distance;
 
-        if (distance < 15 && asteroid.explosionStartTime == null) return false; // معناها أصابت الكويكب
+        if (distance < 15 && asteroid.explosionStartTime == null) {
+          sl<BackgroundSoundsBloc>().add(const BackgroundSoundsExplosionEvent());
+          hit = true;
+          break;
+        }
       }
-      return bullet.position.dy > -50; // ما طلعت من الشاشة
+
+      if (hit) {
+        return bullet.copyWith(
+          isExploding: true,
+          explosionStartTime: DateTime.now(),
+        );
+      } else {
+        return bullet;
+      }
+    }).where((bullet) {
+      // نظهر الطلقة إذا ما انفجرت أو لسه تأثير الانفجار ما خلص
+      if (bullet.isExploding && bullet.explosionStartTime != null) {
+        return DateTime.now().difference(bullet.explosionStartTime!).inMilliseconds < 200;
+      }
+      return bullet.position.dy > -50;
     }).toList();
 
     emit(state.copyWith(bullets: newUpdatedBullets));

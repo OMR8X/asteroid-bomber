@@ -20,3 +20,10 @@ final class BackgroundSoundsStopEvent extends BackgroundSoundsEvent {
   @override
   List<Object> get props => [];
 }
+
+final class BackgroundSoundsExplosionEvent extends BackgroundSoundsEvent {
+  const BackgroundSoundsExplosionEvent();
+
+  @override
+  List<Object> get props => [];
+}
