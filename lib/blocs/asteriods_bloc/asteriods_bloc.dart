@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:asteroid_bomber/constants/layout_constants.dart';
 import 'package:asteroid_bomber/models/screen_size.dart';
 import 'package:asteroid_bomber/resources/asteroids_resources.dart';
 import 'package:asteroid_bomber/resources/images_resources.dart';
@@ -116,6 +117,41 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
                 asteroids.removeAt(i);
                 break;
               }
+            }
+          }
+        }
+      }
+
+      final rocketCenterX = LayoutConstants.rocketSize.width / 2;
+      final rocketCenterY = LayoutConstants.rocketSize.height / 2;
+      final rockectCell = getGridCell(rocketCenterX, rocketCenterY, cellSize);
+
+      for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+          final neighbor = Point(rockectCell.x + dx, rockectCell.y + dy);
+          final asteroids = asteroidGrid[neighbor];
+          if (asteroids == null) continue;
+
+          for (var i = 0; i < asteroids.length; i++) {
+            final asteroid = asteroids[i];
+
+            final ax = (asteroid.line - 0.5) * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine);
+            final ay = asteroid.position + 25;
+
+            final distance = sqrt(pow(ax - rocketCenterX, 2) + pow(ay - rocketCenterY, 2));
+            if (distance < 25 && asteroid.explosionStartTime == null) {
+              // ضرَب الكويكب
+              updated.add(asteroid.copyWith(
+                hp: 0,
+                speed: 0,
+                isExploding: true,
+                explosionStartTime: DateTime.now(),
+              ));
+              // send to aboud block
+              print("Game Over");
+              //
+              asteroids.removeAt(i);
+              break;
             }
           }
         }
