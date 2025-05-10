@@ -1,4 +1,6 @@
 import 'package:asteroid_bomber/blocs/background_bloc/background_bloc.dart';
+import 'package:asteroid_bomber/injection/app_inj.dart';
+import 'package:asteroid_bomber/models/screen_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,7 +15,6 @@ class ScrollingBackgroundView extends StatelessWidget {
     return BlocBuilder<BackgroundBloc, BackgroundState>(
       builder: (context, state) {
         double scrollValue = 0.0;
-
         if (state is BackgroundScrollInProgress) {
           scrollValue = state.scrollValue;
         }
@@ -21,7 +22,7 @@ class ScrollingBackgroundView extends StatelessWidget {
         return Stack(
           children: [
             Positioned(
-              top: scrollValue * height,
+              top: scrollValue * sl<ScreenSize>().height,
               left: 0,
               right: 0,
               child: Image.asset(
@@ -32,7 +33,7 @@ class ScrollingBackgroundView extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: (scrollValue * height) - height,
+              top: (scrollValue * sl<ScreenSize>().height) - sl<ScreenSize>().height,
               left: 0,
               right: 0,
               child: Image.asset(

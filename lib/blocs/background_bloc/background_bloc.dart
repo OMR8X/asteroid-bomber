@@ -20,17 +20,13 @@ class BackgroundBloc extends Bloc<BackgroundEvent, BackgroundState> {
   ) {
     // Cancel any existing timer
     _timer?.cancel();
-
-    // Create a new repeating timer to update the scroll value
     _timer = Timer.periodic(
-      const Duration(milliseconds: 16), // ~60 FPS
+      const Duration(milliseconds: 33), // ~60 FPS
       (timer) {
-        _scrollValue += 0.002; // Scroll speed
-
+        _scrollValue += 0.001; // Scroll speed
         if (_scrollValue > 1.0) {
           _scrollValue = 0.0; // Loop back
         }
-
         // Emit event to update scroll
         add(UpdateScrollPosition(_scrollValue));
       },

@@ -7,6 +7,8 @@ class Asteroid {
   final int line; // 0 .. 4
   double position;
   final String imagePath;
+  final bool isExploding;
+  final DateTime? explosionStartTime;
 
   Asteroid({
     required this.id,
@@ -15,16 +17,29 @@ class Asteroid {
     required this.line,
     required this.imagePath,
     this.position = AsteroidsResources.startPosition,
+    required this.isExploding,
+    this.explosionStartTime,
   });
 
-  Asteroid copyWith({int? hp}) {
+  Asteroid copyWith({
+    int? id,
+    int? line,
+    double? speed,
+    int? hp,
+    String? imagePath,
+    double? position,
+    bool? isExploding,
+    DateTime? explosionStartTime,
+  }) {
     return Asteroid(
-      id: id,
+      id: id ?? this.id,
+      line: line ?? this.line,
+      speed: speed ?? this.speed,
       hp: hp ?? this.hp,
-      speed: speed,
-      line: line,
-      imagePath: imagePath,
-      position: position,
+      imagePath: imagePath ?? this.imagePath,
+      position: position ?? this.position,
+      isExploding: isExploding ?? this.isExploding,
+      explosionStartTime: explosionStartTime ?? this.explosionStartTime,
     );
   }
 }

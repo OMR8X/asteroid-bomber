@@ -17,12 +17,10 @@ class RocketPositionChangedEvent extends RocketEvent {
 }
 
 class RocketScreenInitializedEvent extends RocketEvent {
-  final Size screenSize;
-
-  const RocketScreenInitializedEvent(this.screenSize);
+  const RocketScreenInitializedEvent();
 
   @override
-  List<Object> get props => [screenSize];
+  List<Object> get props => [];
 }
 
 class BulletFiredEvent extends RocketEvent {

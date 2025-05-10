@@ -1,11 +1,12 @@
 import 'dart:math';
-
+import 'package:asteroid_bomber/constants/layout_constants.dart';
+import 'package:asteroid_bomber/models/screen_size.dart';
 import 'package:asteroid_bomber/resources/asteroids_resources.dart';
 import 'package:asteroid_bomber/resources/images_resources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-
+import '../../injection/app_inj.dart';
 import '../../models/asteroid.dart';
 
 part 'asteriods_event.dart';
@@ -17,7 +18,7 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
     on<AddAsteroidEvent>((event, emit) {
       //
       final random = Random();
-      final int newLine = random.nextInt(AsteroidsResources.maxNoLine);
+      final int newLine = random.nextInt(AsteroidsResources.maxNoLine) + 1;
       final lineAsteroids = state.asteroids.where((a) => a.line == newLine).toList();
       double safeTop = AsteroidsResources.startPosition;
       if (lineAsteroids.isNotEmpty) {
@@ -35,24 +36,33 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
         id: _idCounter++,
         hp: 100 * asteroidSize,
         line: newLine,
-        speed: 30 + random.nextDouble() * 6,
+        speed: 1 + (2 / asteroidSize),
         imagePath: "${ImagesResources.asteroidImagePath}$imgPathNum.png",
         position: safeTop,
+        isExploding: false,
       );
       emit(AsteroidsState(asteroids: [...state.asteroids, newAsteroid]));
     });
     on<UpdateAsteroidEvent>((event, emit) {
-      final updated = state.asteroids
-          .map((asteroid) => Asteroid(
-                id: asteroid.id,
-                line: asteroid.line,
-                speed: asteroid.speed,
-                hp: asteroid.hp,
-                imagePath: asteroid.imagePath,
-                position: asteroid.position + asteroid.speed,
-              ))
-          .where((a) => a.position < event.screenHeight)
-          .toList();
+      if (Random().nextInt(100) < (100 - state.asteroids.length * (100 / AsteroidsResources.maxNoAsteroids))) {
+        sl<AsteroidsBloc>().add(AddAsteroidEvent());
+      }
+      final now = DateTime.now();
+      final updated = state.asteroids.where((a) {
+        if (a.hp < 0) {
+          return false;
+        }
+        if (a.isExploding) {
+          final duration = now.difference(a.explosionStartTime!);
+          return duration.inMilliseconds < 100;
+        }
+        return a.position < sl<ScreenSize>().height;
+      }).map((asteroid) {
+        if (!asteroid.isExploding) {
+          return asteroid.copyWith(position: asteroid.position + asteroid.speed / (asteroid.hp / 100));
+        }
+        return asteroid;
+      }).toList();
 
       emit(state.copyWith(asteriods: updated));
     });
@@ -63,8 +73,8 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
       final double cellSize = 100;
       final asteroidGrid = <Point<int>, List<Asteroid>>{};
 
-      for (final asteroid in event.asteroid) {
-        final x = asteroid.line * (event.screenWidth / AsteroidsResources.maxNoLine) + 25;
+      for (final asteroid in state.asteroids) {
+        final x = (asteroid.line - 0.5) * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine) - 25;
         final y = asteroid.position;
         final cell = getGridCell(x, y, cellSize);
         asteroidGrid.putIfAbsent(cell, () => []).add(asteroid);
@@ -73,10 +83,9 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
       final updated = <Asteroid>[];
 
       for (final shoot in event.shoot) {
-        final shootX = shoot.dx;
-        final shootY = shoot.dy;
+        final shootX = shoot.dx + 3;
+        final shootY = shoot.dy + 6;
         final shootCell = getGridCell(shootX, shootY, cellSize);
-
         // مر على الخلية والجيران فقط (3x3 مربعات)
         for (int dx = -1; dx <= 1; dx++) {
           for (int dy = -1; dy <= 1; dy++) {
@@ -87,15 +96,23 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
             for (var i = 0; i < asteroids.length; i++) {
               final asteroid = asteroids[i];
 
-              final ax = asteroid.line * (event.screenWidth / AsteroidsResources.maxNoLine) + 25;
-              final ay = asteroid.position;
+              final ax = (asteroid.line - 0.5) * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine);
+              final ay = asteroid.position + 25;
 
               final distance = sqrt(pow(ax - shootX, 2) + pow(ay - shootY, 2));
-              if (distance < 30) {
+              if (distance < 25 && asteroid.explosionStartTime == null) {
                 // ضرَب الكويكب
                 final updatedAsteroid = asteroid.copyWith(hp: asteroid.hp - 50);
-                if (updatedAsteroid.hp > 0) updated.add(updatedAsteroid);
-
+                if (updatedAsteroid.hp > 0) {
+                  updated.add(updatedAsteroid);
+                } else {
+                  updated.add(asteroid.copyWith(
+                    hp: 0,
+                    speed: 0,
+                    isExploding: true,
+                    explosionStartTime: DateTime.now(),
+                  ));
+                }
                 // إحذف من الشبكة حتى ما ينضرب مرتين
                 asteroids.removeAt(i);
                 break;
@@ -105,12 +122,47 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
         }
       }
 
+      final rocketCenterX = LayoutConstants.rocketSize.width / 2;
+      final rocketCenterY = LayoutConstants.rocketSize.height / 2;
+      final rockectCell = getGridCell(rocketCenterX, rocketCenterY, cellSize);
+
+      for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+          final neighbor = Point(rockectCell.x + dx, rockectCell.y + dy);
+          final asteroids = asteroidGrid[neighbor];
+          if (asteroids == null) continue;
+
+          for (var i = 0; i < asteroids.length; i++) {
+            final asteroid = asteroids[i];
+
+            final ax = (asteroid.line - 0.5) * (sl<ScreenSize>().width / AsteroidsResources.maxNoLine);
+            final ay = asteroid.position + 25;
+
+            final distance = sqrt(pow(ax - rocketCenterX, 2) + pow(ay - rocketCenterY, 2));
+            if (distance < 25 && asteroid.explosionStartTime == null) {
+              // ضرَب الكويكب
+              updated.add(asteroid.copyWith(
+                hp: 0,
+                speed: 0,
+                isExploding: true,
+                explosionStartTime: DateTime.now(),
+              ));
+              // send to aboud block
+              print("Game Over");
+              //
+              asteroids.removeAt(i);
+              break;
+            }
+          }
+        }
+      }
+
       // أضف الكويكبات اللي ما انضربت
-      asteroidGrid.values.forEach((list) {
+      for (var list in asteroidGrid.values) {
         for (final a in list) {
           if (!updated.contains(a)) updated.add(a);
         }
-      });
+      }
 
       emit(state.copyWith(asteriods: updated));
     });
@@ -119,39 +171,3 @@ class AsteroidsBloc extends Bloc<AsteroidsEvent, AsteroidsState> {
     return Point((x / cellSize).floor(), (y / cellSize).floor());
   }
 }
-
-/*
-/// [First Algotithm] 
-/// O(Asteroid * Shoot)
-final updatedAsteroids = event.asteroid
-          .map((asteroid) {
-            bool gotHit = false;
-            for (final shoot in event.shoot) {
-              //
-              final asteroidX = asteroid.line * (event.screenWidth / AsteroidsResources.maxNoLine);
-              final asteroidY = asteroid.position;
-              //
-              final shootX = shoot.dx;
-              final shootY = shoot.dy;
-              //
-              const asteroidRadius = 25.0;
-              const shootRadius = 5.0;
-              //
-              final dx = asteroidX - shootX;
-              final dy = asteroidY - shootY;
-              final distance = sqrt(dx * dx + dy * dy);
-              //
-              if (distance < (asteroidRadius + shootRadius)) {
-                gotHit = true;
-                break;
-              }
-            }
-            if (gotHit) {
-              return asteroid.copyWith(hp: asteroid.hp - 50);
-            }
-            return asteroid;
-          })
-          .where((a) => a.hp > 0)
-          .toList();
-      emit(state.copyWith(asteriods: updatedAsteroids));
-*/

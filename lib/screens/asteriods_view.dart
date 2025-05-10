@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:asteroid_bomber/blocs/asteriods_bloc/asteriods_bloc.dart';
+import 'package:asteroid_bomber/injection/app_inj.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,22 +15,14 @@ class AsteroidsView extends StatefulWidget {
 }
 
 class _AsteroidsViewState extends State<AsteroidsView> with SingleTickerProviderStateMixin {
-  late AsteroidsBloc asteroidsBloc;
   late Timer asteroidTimer;
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    asteroidsBloc = AsteroidsBloc();
-    asteroidsBloc.add(AddAsteroidEvent());
-    int noAsteroids = 0;
-    asteroidTimer = Timer.periodic(Duration(milliseconds: 300), (timer) {
-      asteroidsBloc.add(UpdateAsteroidEvent(screenHeight: MediaQuery.sizeOf(context).height));
-      if (Random().nextInt(100) < (100 - noAsteroids * (100 / AsteroidsResources.maxNoAsteroids))) {
-        asteroidsBloc.add(AddAsteroidEvent());
-        noAsteroids = asteroidsBloc.state.asteroids.length;
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      sl<AsteroidsBloc>().add(AddAsteroidEvent());
     });
     _controller = AnimationController(
       vsync: this,
@@ -41,14 +33,13 @@ class _AsteroidsViewState extends State<AsteroidsView> with SingleTickerProvider
   @override
   void dispose() {
     asteroidTimer.cancel();
-    asteroidsBloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: asteroidsBloc,
+      value: sl<AsteroidsBloc>(),
       child: Container(
         color: Colors.transparent,
         child: Stack(
@@ -57,21 +48,41 @@ class _AsteroidsViewState extends State<AsteroidsView> with SingleTickerProvider
               builder: (context, state) {
                 return Stack(
                   children: state.asteroids.map((asteroid) {
-                    return AnimatedPositioned(
-                      key: ValueKey(asteroid.id),
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.linear,
-                      left: asteroid.line * (MediaQuery.sizeOf(context).width / AsteroidsResources.maxNoLine),
-                      top: asteroid.position,
-                      child: RotationTransition(
-                        turns: _controller,
-                        child: SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Image.asset(asteroid.imagePath),
+                    final left = (asteroid.line - 0.5) * (MediaQuery.sizeOf(context).width / AsteroidsResources.maxNoLine) - 25;
+                    final top = asteroid.position;
+                    if (asteroid.isExploding && asteroid.explosionStartTime != null) {
+                      final progress = DateTime.now().difference(asteroid.explosionStartTime!).inMilliseconds / 200;
+                      final size = 50 + 30 * (0.5 - (progress - 0.5).abs()); // تكبر وتصغر
+                      return Positioned(
+                        key: ValueKey('explosion_${asteroid.id}'),
+                        left: left + size / 8,
+                        top: top,
+                        child: Container(
+                          width: size / 2,
+                          height: size / 2,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      return AnimatedPositioned(
+                        key: ValueKey(asteroid.id),
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.linear,
+                        left: left,
+                        top: top,
+                        child: RotationTransition(
+                          turns: _controller,
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: Image.asset(asteroid.imagePath),
+                          ),
+                        ),
+                      );
+                    }
                   }).toList(),
                 );
               },
